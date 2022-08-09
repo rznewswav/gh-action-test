@@ -35,8 +35,8 @@ jobs:
       
       - name: Set GH Configuration
         run: |
-          gh config set user.name 'GitHub Actions'
-          gh config set user.email 'no-reply@github.com'
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'no-reply@github.com'
 
       - name: Checkout Branch from `master`
         run: |
