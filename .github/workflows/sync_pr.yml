@@ -26,6 +26,8 @@ jobs:
       - name: Checkout New Branch from `master`
         run: |
           new_branch_name="sync/master-dev-$(git rev-parse --short HEAD)"
+          git checkout -b $new_branch_name
+          git push -u origin $new_branch_name
           echo "NEW_BRANCH_NAME=$new_branch_name" >> $GITHUB_ENV
       
       - name: Get Last Commit Message
