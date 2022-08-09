@@ -32,6 +32,11 @@ jobs:
         run: |
           echo ${{ secrets.GH_TOKEN }} | gh auth login --with-token
           gh auth status
+      
+      - name: Set GH Configuration
+        run: |
+          gh config set user.name 'GitHub Actions'
+          gh config set user.email 'no-reply@github.com'
 
       - name: Checkout Branch from `master`
         run: |
