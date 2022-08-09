@@ -23,11 +23,6 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      - name: Get Latest GitHub CLI
-        run: |
-          curl https://github.com/cli/cli/releases/download/v2.14.3/gh_2.14.3_linux_amd64.deb -L > gh_2.14.3_linux_amd64.deb
-          sudo dpkg -i gh_2.14.3_linux_amd64.deb
-
       - name: Checkout New Branch from `master`
         run: |
           new_branch_name="sync/master-dev-$(git rev-parse --short HEAD)"
