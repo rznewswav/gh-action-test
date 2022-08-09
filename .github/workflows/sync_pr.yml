@@ -27,3 +27,7 @@ jobs:
         run: |
           curl https://github.com/cli/cli/releases/download/v2.14.3/gh_2.14.3_linux_amd64.deb -L > gh_2.14.3_linux_amd64.deb
           sudo dpkg -i gh_2.14.3_linux_amd64.deb
+
+      - name: Check GitHub CLI Authentication
+        run: |
+          gh auth status
