@@ -27,11 +27,6 @@ jobs:
         run: |
           echo ${{ github.token }} | gh auth login --with-token
           gh auth status
-      
-      - name: Set GH Configuration
-        run: |
-          git config --global user.name 'GitHub Actions'
-          git config --global user.email 'no-reply@github.com'
 
       - name: Checkout Branch from `master`
         run: |
