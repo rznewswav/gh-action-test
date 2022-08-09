@@ -35,9 +35,17 @@ jobs:
           git push -u origin $new_branch_name
           echo "NEW_BRANCH_NAME=$new_branch_name" >> $GITHUB_ENV
       
+      - name: Get Last Commit Message
+        run: |
+          last_commit_message=$(git log -1 --pretty=format:%s)
+          echo "LAST_COMMIT_MESSAGE=$last_commit_message" >> $GITHUB_ENV
+      
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v4
         with:
           branch: ${{ env.NEW_BRANCH_NAME }}
           base: development
+          title: |
+            Dev Sync: ${{ env.LAST_COMMIT_MESSAGE }}
+          body: This PR is automatically generated to sync master codebase with the development codebase.
