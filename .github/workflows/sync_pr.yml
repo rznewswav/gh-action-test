@@ -39,8 +39,8 @@ jobs:
         id: cpr
         uses: peter-evans/create-pull-request@v4
         with:
-          base: ${{ env.NEW_BRANCH_NAME }}
-          branch: development
+          branch: ${{ env.NEW_BRANCH_NAME }}
+          base: development
           title: |
             Dev Sync: ${{ env.LAST_COMMIT_MESSAGE }}
           body: This PR is automatically generated to sync master codebase with the development codebase.
