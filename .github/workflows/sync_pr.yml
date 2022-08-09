@@ -26,8 +26,6 @@ jobs:
       - name: Checkout New Branch from `master`
         run: |
           new_branch_name="sync/master-dev-$(git rev-parse --short HEAD)"
-          git checkout -b $new_branch_name
-          git push -u origin $new_branch_name
           echo "NEW_BRANCH_NAME=$new_branch_name" >> $GITHUB_ENV
       
       - name: Get Last Commit Message
@@ -39,8 +37,8 @@ jobs:
         id: cpr
         uses: peter-evans/create-pull-request@v4
         with:
-          branch: ${{ env.NEW_BRANCH_NAME }}
-          base: development
+          base: ${{ env.NEW_BRANCH_NAME }}
+          branch: development
           title: |
             Dev Sync: ${{ env.LAST_COMMIT_MESSAGE }}
           body: This PR is automatically generated to sync master codebase with the development codebase.
