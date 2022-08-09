@@ -41,4 +41,5 @@ jobs:
       
       - name: Create PR
         run: |
-          gh pr create --title "Dev Sync: $(git log -1 --pretty=format:%s)" --body "This PR is automatically generated to sync master codebase with the development codebase."
+          last_commit_message=$(git log -1 --pretty=format:%s)
+          gh pr create --base development --title "Dev Sync: $last_commit_message" --body "This PR is automatically generated to sync master codebase with the development codebase."
