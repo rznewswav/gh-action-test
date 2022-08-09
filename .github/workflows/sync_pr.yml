@@ -25,5 +25,5 @@ jobs:
 
       - name: Get Latest GitHub CLI
         run: |
-          curl https://github.com/cli/cli/releases/download/v2.14.3/gh_2.14.3_linux_386.deb -L > gh_2.14.3_linux_386.deb
-          sudo dpkg -i gh_2.14.3_linux_386.deb
+          curl https://github.com/cli/cli/releases/download/v2.14.3/gh_2.14.3_linux_amd64.deb -L > gh_2.14.3_linux_amd64.deb
+          sudo dpkg -i gh_2.14.3_linux_amd64.deb
