@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+echo "Start of file" > ./ever-changing
+
+n=$(($RANDOM % 3))
+n=$(($n + 1))
+
+for i in $(seq 1 $n)
+do
+node -p -e 'require("crypto").randomUUID()' >> ./ever-changing
+done
+
+echo "End of file" >> ./ever-changing
