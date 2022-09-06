@@ -28,6 +28,10 @@ jobs:
           echo ${{ github.token }} | gh auth login --with-token
           gh auth status
 
+      - name: Prepare commit message
+        run: |
+          echo "[Bot] Merge master to development" > .git/COMMIT_EDITMSG 
+
       - name: Merge master -> development
         uses: devmasx/merge-branch@master
         with:
