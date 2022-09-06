@@ -37,7 +37,7 @@ jobs:
         run: |
           git checkout development
           git pull
-          git merge --no-commit --no-ff master && git commit --no-edit || nonmergeable=true
+          git merge --no-commit --no-ff master --allow-unrelated-histories && git commit --no-edit || nonmergeable=true
           echo "Value of nonmergeable=$nonmergeable"
           echo "nonmergeable=$nonmergeable" >> $GITHUB_ENV
 
@@ -53,7 +53,5 @@ jobs:
       - name: Create PR
         if: ${{ env.nonmergeable }}
         run: |
-          git checkout master
-          git pull
           last_commit_message=$(git log -1 --pretty=format:%s)
           gh pr create --base development --title "Dev Sync: $last_commit_message" --body "This PR is automatically generated to sync master codebase with the development codebase."
