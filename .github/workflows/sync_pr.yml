@@ -27,11 +27,16 @@ jobs:
         run: |
           echo ${{ github.token }} | gh auth login --with-token
           gh auth status
-      
+
+      - name: Update Git Branches
+        run: |
+          git remote update
+          git fetch
+
       - name: Checking Mergeability
         run: |
           git checkout development
-          git merge --no-commit --no-ff master && git commit || { echo "nonmergeable=false" >> $GITHUB_ENV }
+          git merge --no-commit --no-ff master && git commit --no-edit || { echo "nonmergeable=false" >> $GITHUB_ENV }
 
       - name: Checkout Branch from `master`
         if: ${{ env.nonmergeable }}
