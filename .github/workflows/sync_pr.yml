@@ -23,6 +23,10 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
       - name: Authenticate GitHub CLI
         run: |
           echo ${{ github.token }} | gh auth login --with-token
@@ -38,17 +42,29 @@ jobs:
           message: |
             [Bot] Merge master to development
 
-      - name: (On fail merge) Checkout Branch from `master`
+      - name: (On fail merge) Push to active/new PR
         if: failure()
         run: |
           git checkout master
-          git pull
-          new_branch_name="sync/master-dev-$(git rev-parse --short HEAD)"
-          git checkout -b $new_branch_name
-          git push -u origin $new_branch_name
-      
-      - name: (On fail merge) Create PR
-        if: failure()
-        run: |
-          last_commit_message=$(git log -1 --pretty=format:%s)
-          gh pr create --base development --title "Dev Sync: $last_commit_message" --body "This PR is automatically generated to sync master codebase with the development codebase."
+
+          headRefNames=$(gh pr list --base development --state open --json headRefName)
+          new_branch_name=$(node -p -e "var headRefs=JSON.parse('$headRefNames'); headRefs.map(e => e.headRefName).find(e => e.startsWith('sync/master-dev-'));")
+
+          if [ $new_branch_name = '' ]
+          then
+            echo "No active PR found. Creating a new branch."
+            new_branch_name="sync/master-dev-$(git rev-parse --short HEAD)"
+            git checkout -b $new_branch_name
+            git push -u origin $new_branch_name
+            last_commit_message=$(git log -1 --pretty=format:%s)
+            gh pr create \
+              --base development \
+              --title "Dev Sync: $last_commit_message" \
+              --body "This PR is automatically generated to sync master codebase with the development codebase. A silent merge could not be made because there is a merge conflict."
+          else
+            echo "Current dev sync PR found. Force repushing to $new_branch_name"
+            git checkout -b $new_branch_name
+            git push --force -u origin $new_branch_name
+          fi
+
+
