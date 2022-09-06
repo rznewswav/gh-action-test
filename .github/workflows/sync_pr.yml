@@ -48,9 +48,9 @@ jobs:
           git checkout master
 
           headRefNames=$(gh pr list --base development --state open --json headRefName)
-          new_branch_name=$(node -p -e "var headRefs=JSON.parse('$headRefNames'); headRefs.map(e => e.headRefName).find(e => e.startsWith('sync/master-dev-'));")
+          new_branch_name=$(node -p -e "var headRefs=JSON.parse('$headRefNames'); headRefs.map(e => e.headRefName).find(e => e.startsWith('sync/master-dev-')) ?? '';")
 
-          if [ $new_branch_name = '' ]
+          if [ -z $new_branch_name ]
           then
             echo "No active PR found. Creating a new branch."
             new_branch_name="sync/master-dev-$(git rev-parse --short HEAD)"
