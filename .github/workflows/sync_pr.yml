@@ -28,21 +28,27 @@ jobs:
           echo ${{ github.token }} | gh auth login --with-token
           gh auth status
 
-      - name: Update Git Branches
+      - name: Setup Git
         run: |
           git remote update
           git fetch
+          git config user.email "actions@github.com"
+          git config user.name "github-actions"
 
       - name: Checking Mergeability
         run: |
           git checkout development
-          git merge --no-commit --no-ff master && git commit --no-edit || nonmergeable=true
+          git pull
+          git merge --no-commit --no-ff master --allow-unrelated-histories && git commit --no-edit || nonmergeable=true
+          [ $nonmergeable = 'true' ] && git merge --abort
+          echo "Value of nonmergeable=$nonmergeable"
           echo "nonmergeable=$nonmergeable" >> $GITHUB_ENV
 
       - name: Checkout Branch from `master`
         if: ${{ env.nonmergeable }}
         run: |
           git checkout master
+          git pull
           new_branch_name="sync/master-dev-$(git rev-parse --short HEAD)"
           git checkout -b $new_branch_name
           git push -u origin $new_branch_name
@@ -50,6 +56,5 @@ jobs:
       - name: Create PR
         if: ${{ env.nonmergeable }}
         run: |
-          git checkout master
           last_commit_message=$(git log -1 --pretty=format:%s)
           gh pr create --base development --title "Dev Sync: $last_commit_message" --body "This PR is automatically generated to sync master codebase with the development codebase."
