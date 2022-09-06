@@ -63,9 +63,7 @@ jobs:
               --body "This PR is automatically generated to sync master codebase with the development codebase. A silent merge could not be made because there is a merge conflict."
           else
             echo "Current dev sync PR found. Force repushing to $new_branch_name"
-            git fetch
-            git branch -D $new_branch_name
-            git checkout $new_branch_name
+            git checkout -b $new_branch_name
             git push --force -u origin $new_branch_name
           fi
 
