@@ -27,7 +27,12 @@ jobs:
         run: |
           echo ${{ github.token }} | gh auth login --with-token
           gh auth status
-      
+
+      - name: Update Git Branches
+        run: |
+          git remote update
+          git fetch
+
       - name: Checking Mergeability
         run: |
           git checkout development
