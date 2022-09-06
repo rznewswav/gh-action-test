@@ -31,7 +31,8 @@ jobs:
       - name: Update Git Branches
         run: |
           git remote update
-          git fetch
+          git fetch origin development:development
+          git fetch origin master:master
 
       - name: Checking Mergeability
         run: |
