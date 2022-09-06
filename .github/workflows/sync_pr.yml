@@ -51,4 +51,4 @@ jobs:
         if: failure()
         run: |
           last_commit_message=$(git log -1 --pretty=format:%s)
-          gh pr create --base development --title "Dev Sync: $last_commit_message" --body "This PR is automatically generated to sync master codebase with the development codebase."
+          gh pr create --base development --title "Dev Sync: $last_commit_message" --body "This PR is automatically generated to sync master codebase with the development codebase. A silect merge could not be made because there is a merge conflict."
