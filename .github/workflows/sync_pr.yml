@@ -42,9 +42,8 @@ jobs:
           git checkout development
           git pull
           git merge master && git push || nonmergeable=true
-          cat ever-changing
           [ $nonmergeable = 'true' ] && git merge --abort
-          echo "Value of nonmergeable=$nonmergeable"
+          cat ever-changing
           echo "nonmergeable=$nonmergeable" >> $GITHUB_ENV
 
       - name: Checkout Branch from `master`
