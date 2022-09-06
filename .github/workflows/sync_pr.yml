@@ -39,7 +39,8 @@ jobs:
         run: |
           git checkout development
           git pull
-          git merge --no-commit --no-ff master --allow-unrelated-histories && git commit --no-edit || { git merge --abort; nonmergeable=true }
+          git merge --no-commit --no-ff master --allow-unrelated-histories && git commit --no-edit || nonmergeable=true
+          [ $nonmergeable = 'true' ] && git merge --abort
           echo "Value of nonmergeable=$nonmergeable"
           echo "nonmergeable=$nonmergeable" >> $GITHUB_ENV
 
