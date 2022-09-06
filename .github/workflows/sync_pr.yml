@@ -27,14 +27,20 @@ jobs:
         run: |
           echo ${{ github.token }} | gh auth login --with-token
           gh auth status
+      
+      - name: Checking Mergeability
+        run: |
+          git merge --no-commit --no-ff master && git commit || { echo "nonmergeable=false" >> $GITHUB_ENV}
 
       - name: Checkout Branch from `master`
+        if: ${{ env.nonmergeable }}
         run: |
           new_branch_name="sync/master-dev-$(git rev-parse --short HEAD)"
           git checkout -b $new_branch_name
           git push -u origin $new_branch_name
       
       - name: Create PR
+        if: ${{ env.nonmergeable }}
         run: |
           last_commit_message=$(git log -1 --pretty=format:%s)
           gh pr create --base development --title "Dev Sync: $last_commit_message" --body "This PR is automatically generated to sync master codebase with the development codebase."
