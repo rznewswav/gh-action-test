@@ -41,9 +41,9 @@ jobs:
           git pull
           git checkout development
           git pull
-          git merge --no-commit master --allow-unrelated-histories && git commit --no-edit || nonmergeable=true
+          git merge master && git push || nonmergeable=true
           cat ever-changing
-          [ $nonmergeable = 'true' ] && git merge --abort || git push
+          [ $nonmergeable = 'true' ] && git merge --abort
           echo "Value of nonmergeable=$nonmergeable"
           echo "nonmergeable=$nonmergeable" >> $GITHUB_ENV
 
