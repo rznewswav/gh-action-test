@@ -23,24 +23,18 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      - name: Checkout New Branch from `master`
+      - name: Authenticate GitHub CLI
+        run: |
+          echo ${{ github.token }} | gh auth login --with-token
+          gh auth status
+
+      - name: Checkout Branch from `master`
         run: |
           new_branch_name="sync/master-dev-$(git rev-parse --short HEAD)"
           git checkout -b $new_branch_name
           git push -u origin $new_branch_name
-          echo "NEW_BRANCH_NAME=$new_branch_name" >> $GITHUB_ENV
       
-      - name: Get Last Commit Message
+      - name: Create PR
         run: |
           last_commit_message=$(git log -1 --pretty=format:%s)
-          echo "LAST_COMMIT_MESSAGE=$last_commit_message" >> $GITHUB_ENV
-      
-      - name: Create Pull Request
-        id: cpr
-        uses: peter-evans/create-pull-request@v4
-        with:
-          base: ${{ env.NEW_BRANCH_NAME }}
-          branch: development
-          title: |
-            Dev Sync: ${{ env.LAST_COMMIT_MESSAGE }}
-          body: This PR is automatically generated to sync master codebase with the development codebase.
+          gh pr create --base development --title "Dev Sync: $last_commit_message" --body "This PR is automatically generated to sync master codebase with the development codebase."
