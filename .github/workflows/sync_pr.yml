@@ -42,27 +42,30 @@ jobs:
           message: |
             [Bot] Merge master to development
 
-      - name: (On fail merge) Push to active PR
+      - name: (On fail merge) Push to active/new PR
         if: failure()
         run: |
+          git checkout master
+
           headRefNames=$(gh pr list --base development --state open --json headRefName)
-          shouldCreatePR=false
-          if [ $headRefNames = '[]' ]
+          new_branch_name=$(node -p -e "var headRefs=JSON.parse('$headRefNames'); headRefs.map(e => e.headRefName).find(e => e.startsWith('sync/master-dev-'));")
+
+          if [ $new_branch_name = '' ]
           then
+            echo "No active PR found. Creating a new branch."
             new_branch_name="sync/master-dev-$(git rev-parse --short HEAD)"
-            shouldCreatePR=true
-          else
-            new_branch_name=$(node -p -e "var headRefs=JSON.parse('$headRefNames'); headRefs.map(e => e.headRefName).find(e => e.startsWith('sync/master-dev-'));")
-          fi
-
-          git checkout -b $new_branch_name
-          git push -u origin $new_branch_name
-
-          last_commit_message=$(git log -1 --pretty=format:%s)
-          if [ $shouldCreatePR = 'true' ]
-          then
+            git checkout -b $new_branch_name
+            git push -u origin $new_branch_name
+            last_commit_message=$(git log -1 --pretty=format:%s)
             gh pr create \
               --base development \
               --title "Dev Sync: $last_commit_message" \
               --body "This PR is automatically generated to sync master codebase with the development codebase. A silent merge could not be made because there is a merge conflict."
+          else
+            echo "Current dev sync PR found. Force repushing to $new_branch_name"
+            git branch -D $new_branch_name
+            git checkout $new_branch_name
+            git push --force -u origin $new_branch_name
           fi
+
+
