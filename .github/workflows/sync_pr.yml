@@ -37,6 +37,7 @@ jobs:
         run: |
           git checkout development
           git merge --no-commit --no-ff master && git commit --no-edit || nonmergeable=true
+          echo "Value of nonmergeable=$nonmergeable"
           echo "nonmergeable=$nonmergeable" >> $GITHUB_ENV
 
       - name: Checkout Branch from `master`
