@@ -6,7 +6,7 @@ name: Sync Master to Development
 on:
   # Triggers the workflow on push or pull request events but only for the "master" branch
   push:
-    branches: [ "master" ]
+    branches: ['master']
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -29,21 +29,23 @@ jobs:
 
       - name: Authenticate GitHub CLI
         run: |
-          echo ${{ github.token }} | gh auth login --with-token
+          echo ${{ secrets.WORKFLOW_TOKEN }} | gh auth login --with-token
           gh auth status
 
       - name: Merge master -> development
+        id: mergeMaster
         uses: devmasx/merge-branch@master
+        continue-on-error: true
         with:
           type: now
           from_branch: master
           target_branch: development
-          github_token: ${{ github.token }}
+          github_token: ${{ secrets.WORKFLOW_TOKEN }}
           message: |
             [Bot] Merge master to development
 
       - name: (On fail merge) Push to active/new PR
-        if: failure()
+        if: steps.mergeMaster.outcome == 'failure'
         run: |
           git checkout master
 
@@ -66,5 +68,3 @@ jobs:
             git checkout -b $new_branch_name
             git push --force -u origin $new_branch_name
           fi
-
-
